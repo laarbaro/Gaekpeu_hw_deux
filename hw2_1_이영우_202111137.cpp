@@ -57,15 +57,13 @@ public:
 
 IArticlePub::IArticlePub(const string name) {
     pub_name = name;
-    pub_id = static_pub_counter;
-    static_pub_counter++;
+    pub_id = ++static_pub_counter;
     recent_contents = "";
     cout << "[Constructor]New Pub Created: ("<< pub_name << "," << pub_id << ")" << endl;
 }
 IArticlePub::IArticlePub(const string name, const string con) {
     pub_name = name;
-    pub_id = static_pub_counter;
-    static_pub_counter++;
+    pub_id = ++static_pub_counter;
     recent_contents = con;
     cout << "[Constructor]New Pub Created: ("<< pub_name << "," << pub_id << ")" << endl;
 }
@@ -180,31 +178,26 @@ int IArticlePub::getSubSize() {
     return numOfSub;
 }
 void IArticlePub::PrintAllSub() {
-    //존재하지 않는 경우
-    cout << "All Sub of (" << getPubName() << "," << getPubID() << "): ";
+    //cout << "All Sub of (" << getPubName() << "," << getPubID() << "): ";
     for (int i = 0; i < numOfSub; i++) {
         cout << "[" << sub_list[i]->getSubName() << "," << sub_list[i]->getSubID() << "]";
     }
     cout << endl;
 }
-int IArticlePub::static_pub_counter = 1;
+int IArticlePub::static_pub_counter = 0;
 
 IArticleSub::IArticleSub(string name) {
     sub_name = name;
-    sub_id = static_sub_counter;
-    static_sub_counter++;
+    sub_id = ++static_sub_counter;
     recent_article_contents = "";
     cout << "[Constructor]New Sub Created: ("<< sub_name << "," << sub_id << ")" << endl;
 }
 IArticleSub::IArticleSub(string name, IArticlePub* articlePub) {
     sub_name = name;
-    sub_id = static_sub_counter;
-    static_sub_counter++;
+    sub_id = ++static_sub_counter;
     recent_article_contents = "";
     cout << "[Constructor]New Sub Created: ("<< sub_name << "," << sub_id << ")" << endl;
     Attach(articlePub);
-    //recent_article_pub = ;
-    
 }
 IArticleSub::~IArticleSub() {
     cout << "IArticleSub Destructor called" << endl;
@@ -269,11 +262,10 @@ int IArticleSub::getPubSize() {
     return numOfPub;
 }
 void IArticleSub::PrintAllPub() {
-    cout << "All Pub of (" << getSubName() << "," << getSubID() << "): ";
+    //cout << "All Pub of (" << getSubName() << "," << getSubID() << "): ";
     for (int i = 0; i < numOfPub; i++) {
         cout << "[" << pub_list[i]->getPubName() << "," << pub_list[i]->getPubID() << "]";
     }
     cout << endl;
 }
-int IArticleSub::static_sub_counter = 1;
-
+int IArticleSub::static_sub_counter = 0;
