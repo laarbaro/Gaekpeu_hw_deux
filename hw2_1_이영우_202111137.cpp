@@ -76,41 +76,89 @@ IArticlePub::~IArticlePub() {
     }
 }
 void IArticlePub::NotifyAttach(IArticleSub* subscriber) {
-    cout << "[Attach] Sub (" << subscriber->getSubName() << "," << subscriber->getSubID() << ") is attached to Pub (" << pub_name << "," << pub_id << ")" << endl;
-    sub_list[numOfSub] = subscriber;
-    numOfSub++;
-    subscriber->AttachResponse(this);
-}
-void IArticlePub::NotifyAttachResponse(IArticleSub* subscriber) {
-    cout << "[Attach] Sub (" << subscriber->getSubName() << "," << subscriber->getSubID() << ") is attached to Pub (" << pub_name << "," << pub_id << ")" << endl;
-    sub_list[numOfSub] = subscriber;
-    numOfSub++;
-}
-void IArticlePub::NotifyDetach(IArticleSub* subscriber) {
-    cout << "[Pub] (" << getPubName() << "," << getPubID() << ") detach [Sub] (" << subscriber->getSubName() << "," << subscriber->getSubID() << ")" << endl;
+    bool exist_sub = false;
     for (int i = 0; i < numOfSub; i++) {
-        if (sub_list[i]->getSubID() == subscriber->getSubID()) {
-            for (int j = i; j < numOfSub-1 ; j++) {
-                sub_list[j] = sub_list[j+1];
-            }
-            sub_list[numOfSub] = nullptr;
-            numOfSub--;
-            subscriber->DetachResponse(this);
+        if (sub_list[i] == subscriber) {
+            exist_sub = true;
             break;
         }
     }
+    if (exist_sub == true) {
+        cout << "error: the subscriber already exists in the publisher’s subscriber list" << endl;
+    }
+    else {
+        cout << "[Attach] Sub (" << subscriber->getSubName() << "," << subscriber->getSubID() << ") is attached to Pub (" << pub_name << "," << pub_id << ")" << endl;
+        sub_list[numOfSub] = subscriber;
+        numOfSub++;
+        subscriber->AttachResponse(this);
+    }
 }
-void IArticlePub::NotifyDetachResponse(IArticleSub* subscriber) {
-    cout << "[Pub] (" << getPubName() << "," << getPubID() << ") detach [Sub] (" << subscriber->getSubName() << "," << subscriber->getSubID() << ")" << endl;
+void IArticlePub::NotifyAttachResponse(IArticleSub* subscriber) {
+    bool exist_sub = false;
     for (int i = 0; i < numOfSub; i++) {
-        if (sub_list[i]->getSubID() == subscriber->getSubID()) {
-            for (int j = i; j < numOfSub-1 ; j++) {
-                sub_list[j] = sub_list[j+1];
-            }
-            sub_list[numOfSub] = nullptr;
-            numOfSub--;
+        if (sub_list[i] == subscriber) {
+            exist_sub = true;
             break;
         }
+    }
+    if (exist_sub == true) {
+        cout << "error: the subscriber already exists in the publisher’s subscriber list" << endl;
+    }
+    else {
+        cout << "[Attach] Sub (" << subscriber->getSubName() << "," << subscriber->getSubID() << ") is attached to Pub (" << pub_name << "," << pub_id << ")" << endl;
+        sub_list[numOfSub] = subscriber;
+        numOfSub++;
+    }
+}
+void IArticlePub::NotifyDetach(IArticleSub* subscriber) {
+    bool exist_sub = false;
+    for (int i = 0; i < numOfSub; i++) {
+        if (sub_list[i] == subscriber) {
+            exist_sub = true;
+            break;
+        }
+    }
+    if (exist_sub == true) {
+        cout << "[Pub] (" << getPubName() << "," << getPubID() << ") detach [Sub] (" << subscriber->getSubName() << "," << subscriber->getSubID() << ")" << endl;
+        for (int i = 0; i < numOfSub; i++) {
+            if (sub_list[i]->getSubID() == subscriber->getSubID()) {
+                for (int j = i; j < numOfSub-1 ; j++) {
+                    sub_list[j] = sub_list[j+1];
+                }
+                sub_list[numOfSub] = nullptr;
+                numOfSub--;
+                subscriber->DetachResponse(this);
+                break;
+            }
+        }
+    }
+    else {
+        cout << "error: the subscriber doesn’t exist in the publisher’s subscriber list" << endl;
+    }
+}
+void IArticlePub::NotifyDetachResponse(IArticleSub* subscriber) {
+    bool exist_sub = false;
+    for (int i = 0; i < numOfSub; i++) {
+        if (sub_list[i] == subscriber) {
+            exist_sub = true;
+            break;
+        }
+    }
+    if (exist_sub == true) {
+        cout << "[Pub] (" << getPubName() << "," << getPubID() << ") detach [Sub] (" << subscriber->getSubName() << "," << subscriber->getSubID() << ")" << endl;
+        for (int i = 0; i < numOfSub; i++) {
+            if (sub_list[i]->getSubID() == subscriber->getSubID()) {
+                for (int j = i; j < numOfSub-1 ; j++) {
+                    sub_list[j] = sub_list[j+1];
+                }
+                sub_list[numOfSub] = nullptr;
+                numOfSub--;
+                break;
+            }
+        }
+    }
+    else {
+        cout << "error: the subscriber doesn’t exist in the publisher’s subscriber list" << endl;
     }
 }
 void IArticlePub::updatePubContents(string c) {
@@ -132,6 +180,7 @@ int IArticlePub::getSubSize() {
     return numOfSub;
 }
 void IArticlePub::PrintAllSub() {
+    //존재하지 않는 경우
     cout << "All Sub of (" << getPubName() << "," << getPubID() << "): ";
     for (int i = 0; i < numOfSub; i++) {
         cout << "[" << sub_list[i]->getSubName() << "," << sub_list[i]->getSubID() << "]";
@@ -208,7 +257,6 @@ void IArticleSub::Update(IArticlePub* publisher, const string contents) {
     PrintContents();
 }
 void IArticleSub::PrintContents() {
-    //Sub (Jenny,1)'s latest subscribed news is "Welcome New DGIST students" by DGIST
     cout << "Sub (" << getSubName() << "," << getSubID() << ")'s latest subscribed news is \"" << recent_article_contents <<  "\"" << " by " << recent_article_pub->getPubName() << endl;
 }
 string IArticleSub::getSubName() {
@@ -228,3 +276,4 @@ void IArticleSub::PrintAllPub() {
     cout << endl;
 }
 int IArticleSub::static_sub_counter = 1;
+
